@@ -2,62 +2,43 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.utils.TimeUtils;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import screens.MainMenu;
-import screens.Splash;
 
-public class FrogKnight extends Game {
+public class FrogKnight extends GameBeta {
 	private Game game;
-	private SpriteBatch batch;
-	private Texture frogTexture;
-	private float frogX;
-	private float frogY;
-	private Rectangle frogHitBox;
-	private Texture babyTexture;
-	private float babyX;
-	private float babyY;
-	private Rectangle babyHitBox;
-	private boolean win;
-	private long startTime;
+	private Frog player;
+	private BaseActor castle;
+	private PillarLeft leftPillar;
+	private PillarRight rightPillar;
 
 	public FrogKnight(){
 		game = this;
 	}
 
 	@Override
-	public void create() {
-		startTime = TimeUtils.millis();
-		game.setScreen(new Splash(game));
-		batch = new SpriteBatch();
-		frogTexture = new Texture(Gdx.files.internal("Player/idle1.png"));
-		frogX = 0;
-		frogY = 0;
-		frogHitBox = new Rectangle(frogX,frogY,frogTexture.getWidth(),frogTexture.getHeight());
-		babyTexture = new Texture(Gdx.files.internal("babyHeadBlue.png"));
-		babyX = 500;
-		babyY = 500;
-		babyHitBox = new Rectangle(babyX,babyY,babyTexture.getWidth(),babyTexture.getHeight());
-		win = false;
+	public void initialize() {
+		castle = new BaseActor(0,0,mainStage);
+		castle.loadTexture("Map/Castle.png");
+		castle.setSize(1280,720);
+		leftPillar = new PillarLeft(0,Gdx.graphics.getHeight()-140,mainStage);
+		rightPillar = new PillarRight(Gdx.graphics.getWidth()-214,Gdx.graphics.getHeight()-156,mainStage);
+		BaseActor.setWorldBounds(castle);
+		player = new Frog(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2, mainStage);
 	}
 
+
 	@Override
-	public void render() {
+	public void update(float dt) {
+		player.preventOverlap(leftPillar);
+		player.preventOverlap(rightPillar);
+		mainStage.act(1/60f);
 		Gdx.gl.glClearColor(0,0,0,1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		super.render();
+		mainStage.draw();
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		batch.dispose();
 	}
 
 }
